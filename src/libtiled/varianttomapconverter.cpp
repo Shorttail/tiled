@@ -229,7 +229,7 @@ SharedTileset VariantToMapConverter::toTileset(const QVariant &variant)
         const int imageHeight = variantMap[QLatin1String("imageheight")].toInt();
 
         ImageReference imageRef;
-        imageRef.source = resolvePath(mMapDir, imageVariant);
+        imageRef.source = toUrl(imageVariant.toString(), mMapDir);
         imageRef.size = QSize(imageWidth, imageHeight);
 
         tileset->setImageReference(imageRef);
@@ -282,8 +282,8 @@ SharedTileset VariantToMapConverter::toTileset(const QVariant &variant)
 
         imageVariant = tileVar[QLatin1String("image")];
         if (!imageVariant.isNull()) {
-            QString imagePath = resolvePath(mMapDir, imageVariant);
-            tileset->setTileImage(tile, QPixmap(imagePath), imagePath);
+            const QUrl imagePath = toUrl(imageVariant.toString(), mMapDir);
+            tileset->setTileImage(tile, QPixmap(imagePath.toLocalFile()), imagePath);
         }
 
         QVariantMap objectGroupVariant = tileVar[QLatin1String("objectgroup")].toMap();

@@ -151,9 +151,9 @@ QVariant MapToVariantConverter::toVariant(const Tileset &tileset,
     }
 
     // Write the image element
-    const QString &imageSource = tileset.imageSource();
+    const QUrl &imageSource = tileset.imageSource();
     if (!imageSource.isEmpty()) {
-        const QString rel = mMapDir.relativeFilePath(tileset.imageSource());
+        const QString rel = toFileReference(imageSource, mMapDir);
 
         tilesetVariant[QLatin1String("image")] = rel;
 
@@ -188,7 +188,7 @@ QVariant MapToVariantConverter::toVariant(const Tileset &tileset,
         if (tile->probability() != 1.f)
             tileVariant[QLatin1String("probability")] = tile->probability();
         if (!tile->imageSource().isEmpty()) {
-            const QString rel = mMapDir.relativeFilePath(tile->imageSource());
+            const QString rel = toFileReference(tile->imageSource(), mMapDir);
             tileVariant[QLatin1String("image")] = rel;
 
             const QSize tileSize = tile->size();

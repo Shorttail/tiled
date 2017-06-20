@@ -27,6 +27,7 @@
 #include "mapobject.h"
 #include "savefile.h"
 #include "tile.h"
+#include "tiled.h"
 #include "tilelayer.h"
 #include "tileset.h"
 #include "objectgroup.h"
@@ -309,8 +310,7 @@ bool FlarePlugin::write(const Tiled::Map *map, const QString &fileName)
 
     out << "[tilesets]\n";
     for (const SharedTileset &tileset : map->tilesets()) {
-        const QString &imageSource = tileset->imageSource();
-        QString source = mapDir.relativeFilePath(imageSource);
+        QString source = toFileReference(tileset->imageSource(), mapDir);
         out << "tileset=" << source
             << "," << tileset->tileWidth()
             << "," << tileset->tileHeight()

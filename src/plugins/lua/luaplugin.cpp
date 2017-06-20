@@ -224,7 +224,7 @@ void LuaPlugin::writeTileset(LuaTableWriter &writer, const Tileset *tileset,
     writer.writeKeyAndValue("margin", tileset->margin());
 
     if (!tileset->imageSource().isEmpty()) {
-        const QString rel = mMapDir.relativeFilePath(tileset->imageSource());
+        const QString rel = toFileReference(tileset->imageSource(), mMapDir);
         writer.writeKeyAndValue("image", rel);
         writer.writeKeyAndValue("imagewidth", tileset->imageWidth());
         writer.writeKeyAndValue("imageheight", tileset->imageHeight());
@@ -285,7 +285,7 @@ void LuaPlugin::writeTileset(LuaTableWriter &writer, const Tileset *tileset,
             writeProperties(writer, tile->properties());
 
         if (!tile->imageSource().isEmpty()) {
-            const QString src = mMapDir.relativeFilePath(tile->imageSource());
+            const QString src = toFileReference(tile->imageSource(), mMapDir);
             const QSize tileSize = tile->size();
             writer.writeKeyAndValue("image", src);
             if (!tileSize.isNull()) {

@@ -488,9 +488,10 @@ ImageReference MapReaderPrivate::readImage()
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("image"));
 
     const QXmlStreamAttributes atts = xml.attributes();
+    const QString source = atts.value(QLatin1String("source")).toString();
 
     ImageReference image;
-    image.source = atts.value(QLatin1String("source")).toString();
+    image.source = toUrl(source, QDir(mPath));
     image.format = atts.value(QLatin1String("format")).toLatin1();
     image.size = QSize(atts.value(QLatin1String("width")).toInt(),
                        atts.value(QLatin1String("height")).toInt());
@@ -517,7 +518,6 @@ ImageReference MapReaderPrivate::readImage()
             }
         }
     } else {
-        image.source = p->resolveReference(image.source, mPath);
         xml.skipCurrentElement();
     }
 
@@ -1137,8 +1137,8 @@ QString MapReader::errorString() const
 QString MapReader::resolveReference(const QString &reference,
                                     const QString &mapPath)
 {
-    if (!reference.isEmpty() && QDir::isRelativePath(reference))
-        return QDir::cleanPath(mapPath + QLatin1Char('/') + reference);
+    if (!reference.isEmpty())
+        return QDir::cleanPath(QDir(mapPath).filePath(reference));
     return reference;
 }
 

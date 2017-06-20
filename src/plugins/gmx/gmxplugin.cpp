@@ -235,7 +235,7 @@ bool GmxPlugin::write(const Map *map, const QString &fileName)
                         int yo = 0;
 
                         if (tileset->isCollection()) {
-                            bgName = QFileInfo(tile->imageSource()).baseName();
+                            bgName = QFileInfo(tile->imageSource().path()).baseName();
                         } else {
                             bgName = tileset->name();
 
@@ -310,7 +310,7 @@ bool GmxPlugin::write(const Map *map, const QString &fileName)
                     int yo = 0;
 
                     if (tileset->isCollection()) {
-                        bgName = QFileInfo(tile->imageSource()).baseName();
+                        bgName = QFileInfo(tile->imageSource().path()).baseName();
                     } else {
                         bgName = tileset->name();
 

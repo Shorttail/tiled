@@ -769,7 +769,7 @@ void PropertyBrowser::addTilesetProperties()
 
         parametersProperty->setEnabled(mTilesetDocument);
 
-        QtVariantProperty *imageSourceProperty = addProperty(ImageSourceProperty, QVariant::String, tr("Source"), parametersProperty);
+        QtVariantProperty *imageSourceProperty = addProperty(ImageUrlProperty, QVariant::Url, tr("Source"), parametersProperty);
         QtVariantProperty *tileWidthProperty = addProperty(TileWidthProperty, QVariant::Int, tr("Tile Width"), parametersProperty);
         QtVariantProperty *tileHeightProperty = addProperty(TileHeightProperty, QVariant::Int, tr("Tile Height"), parametersProperty);
         QtVariantProperty *marginProperty = addProperty(MarginProperty, QVariant::Int, tr("Margin"), parametersProperty);
@@ -810,12 +810,12 @@ void PropertyBrowser::addTileProperties()
 
     const Tile *tile = static_cast<const Tile*>(mObject);
     if (!tile->imageSource().isEmpty()) {
-        QtVariantProperty *imageSourceProperty = addProperty(ImageSourceProperty,
-                                                             filePathTypeId(),
+        QtVariantProperty *imageSourceProperty = addProperty(ImageUrlProperty,
+                                                             QVariant::Url,
                                                              tr("Image"), groupProperty);
-
-        imageSourceProperty->setAttribute(QLatin1String("filter"),
-                                          Utils::readableImageFormatsFilter());
+        // todo: find a new way to enable this file filter
+//        imageSourceProperty->setAttribute(QLatin1String("filter"),
+//                                          Utils::readableImageFormatsFilter());
         imageSourceProperty->setEnabled(mTilesetDocument);
     }
 
@@ -1180,10 +1180,10 @@ void PropertyBrowser::applyTileValue(PropertyId id, const QVariant &val)
                                                   mTilesetDocument->selectedTiles(),
                                                   val.toFloat()));
         break;
-    case ImageSourceProperty: {
-        const FilePath filePath = val.value<FilePath>();
+    case ImageUrlProperty: {
+        const QUrl url = val.toUrl();
         undoStack->push(new ChangeTileImageSource(mTilesetDocument,
-                                                  tile, filePath.absolutePath));
+                                                  tile, url));
         break;
     }
     default:
@@ -1470,7 +1470,7 @@ void PropertyBrowser::updateProperties()
 
         if (!tileset->isCollection()) {
             mIdToProperty[TilesetImageParametersProperty]->setValue(QVariant::fromValue(mTilesetDocument));
-            mIdToProperty[ImageSourceProperty]->setValue(QVariant::fromValue(FilePath { tileset->imageSource() }));
+            mIdToProperty[ImageUrlProperty]->setValue(tileset->imageSource());
             mIdToProperty[TileWidthProperty]->setValue(tileset->tileWidth());
             mIdToProperty[TileHeightProperty]->setValue(tileset->tileHeight());
             mIdToProperty[MarginProperty]->setValue(tileset->margin());
@@ -1487,8 +1487,8 @@ void PropertyBrowser::updateProperties()
         mIdToProperty[WidthProperty]->setValue(tileSize.width());
         mIdToProperty[HeightProperty]->setValue(tileSize.height());
         mIdToProperty[TileProbabilityProperty]->setValue(tile->probability());
-        if (QtVariantProperty *imageSourceProperty = mIdToProperty.value(ImageSourceProperty))
-            imageSourceProperty->setValue(QVariant::fromValue(FilePath { tile->imageSource() }));
+        if (QtVariantProperty *imageSourceProperty = mIdToProperty.value(ImageUrlProperty))
+            imageSourceProperty->setValue(tile->imageSource());
         break;
     }
     case Object::TerrainType: {

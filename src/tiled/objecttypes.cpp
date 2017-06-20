@@ -38,8 +38,8 @@ namespace Internal {
 
 static QString resolveReference(const QString &reference, const QString &filePath)
 {
-    if (!reference.isEmpty() && QDir::isRelativePath(reference))
-        return QDir::cleanPath(filePath + QLatin1Char('/') + reference);
+    if (!reference.isEmpty())
+        return QDir::cleanPath(QDir(filePath).filePath(reference));
     return reference;
 }
 

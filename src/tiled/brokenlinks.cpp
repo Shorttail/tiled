@@ -55,11 +55,11 @@ QString BrokenLink::filePath() const
 {
     switch (type) {
     case TilesetImageSource:
-        return _tileset->imageSource();
+        return _tileset->imageSource().toString(QUrl::PreferLocalFile);
     case MapTilesetReference:
         return _tileset->fileName();
     case TilesetTileImageSource:
-        return _tile->imageSource();
+        return _tile->imageSource().toString(QUrl::PreferLocalFile);
     }
 
     return QString();
@@ -492,6 +492,7 @@ void BrokenLinksWidget::tryFixLink(const BrokenLink &link)
         startLocation += QLatin1Char('/');
         startLocation += QFileInfo(link.filePath()).fileName();
 
+        // todo: use getOpenFileUrl
         QString newFileName = QFileDialog::getOpenFileName(window(),
                                                            tr("Locate File"),
                                                            startLocation,
@@ -508,9 +509,11 @@ void BrokenLinksWidget::tryFixLink(const BrokenLink &link)
             return;
         }
 
+        const QUrl newSource(QUrl::fromLocalFile(newFileName));
+
         if (link.type == TilesetImageSource) {
             TilesetParameters parameters(*link._tileset);
-            parameters.imageSource = newFileName;
+            parameters.imageSource = newSource;
 
             auto command = new ChangeTilesetParameters(tilesetDocument,
                                                        parameters);
@@ -519,7 +522,7 @@ void BrokenLinksWidget::tryFixLink(const BrokenLink &link)
         } else {
             auto command = new ChangeTileImageSource(tilesetDocument,
                                                      link._tile,
-                                                     newFileName);
+                                                     newSource);
 
             tilesetDocument->undoStack()->push(command);
         }
@@ -585,9 +588,11 @@ bool BrokenLinksWidget::tryFixLink(const BrokenLink &link, const QString &newFil
             return false;
         }
 
+        const QUrl newSource(QUrl::fromLocalFile(newFilePath));
+
         if (link.type == TilesetImageSource) {
             TilesetParameters parameters(*link._tileset);
-            parameters.imageSource = newFilePath;
+            parameters.imageSource = newSource;
 
             auto command = new ChangeTilesetParameters(tilesetDocument,
                                                        parameters);
@@ -596,7 +601,7 @@ bool BrokenLinksWidget::tryFixLink(const BrokenLink &link, const QString &newFil
         } else {
             auto command = new ChangeTileImageSource(tilesetDocument,
                                                      link._tile,
-                                                     newFilePath);
+                                                     newSource);
 
             tilesetDocument->undoStack()->push(command);
         }

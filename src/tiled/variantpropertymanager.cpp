@@ -158,7 +158,7 @@ QString VariantPropertyManager::valueText(const QtProperty *property) const
 
         if (typeId == tilesetParametersTypeId()) {
             if (TilesetDocument *tilesetDocument = value.value<TilesetDocument*>())
-                return QFileInfo(tilesetDocument->tileset()->imageSource()).fileName();
+                return tilesetDocument->tileset()->imageSource().fileName();
         }
 
         return value.toString();
@@ -189,8 +189,9 @@ QIcon VariantPropertyManager::valueIcon(const QtProperty *property) const
             filePath = value.value<FilePath>().absolutePath;
 
         if (typeId == tilesetParametersTypeId()) {
+            // TODO: Needs a special icon for when the image souce is remote file
             if (TilesetDocument *tilesetDocument = value.value<TilesetDocument*>())
-                filePath = tilesetDocument->tileset()->imageSource();
+                filePath = tilesetDocument->tileset()->imageSource().toLocalFile();
         }
 
         // TODO: This assumes the file path is an image reference. It should be
