@@ -133,7 +133,7 @@ void BrokenLinksModel::refresh()
         auto processTileset = [this](const SharedTileset &tileset) {
             if (tileset->isCollection()) {
                 for (Tile *tile : tileset->tiles()) {
-                    if (!tile->imageSource().isEmpty() && !tile->imageLoaded()) {
+                    if (!tile->imageSource().isEmpty() && tile->imageStatus() == LoadingError) {
                         BrokenLink link;
                         link.type = TilesetTileImageSource;
                         link._tile = tile;
@@ -241,7 +241,7 @@ void BrokenLinksModel::tileImageSourceChanged(Tile *tile)
                                                     mBrokenLinks.end(),
                                                     matchesTile);
 
-    if (!tile->imageSource().isEmpty() && !tile->imageLoaded()) {
+    if (!tile->imageSource().isEmpty() && tile->imageStatus() == LoadingError) {
         if (it != mBrokenLinks.end()) {
             int linkIndex = it - mBrokenLinks.begin();
             emit dataChanged(index(linkIndex, 0), index(linkIndex, 1));

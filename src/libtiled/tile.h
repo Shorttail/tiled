@@ -30,6 +30,7 @@
 #pragma once
 
 #include "object.h"
+#include "tiled.h"
 
 #include <QPixmap>
 #include <QSharedPointer>
@@ -141,7 +142,8 @@ public:
     bool resetAnimation();
     bool advanceAnimation(int ms);
 
-    bool imageLoaded() const;
+    LoadingStatus imageStatus() const;
+    void setImageStatus(LoadingStatus status);
 
     Tile *clone(Tileset *tileset) const;
 
@@ -150,6 +152,7 @@ private:
     Tileset *mTileset;
     QPixmap mImage;
     QUrl mImageSource;
+    LoadingStatus mImageStatus;
     QString mType;
     unsigned mTerrain;
     float mProbability;
@@ -319,9 +322,14 @@ inline int Tile::currentFrameIndex() const
 /**
  * Returns whether the image referenced by this tile was loaded.
  */
-inline bool Tile::imageLoaded() const
+inline LoadingStatus Tile::imageStatus() const
 {
-    return !mImage.isNull();
+    return mImageStatus;
+}
+
+inline void Tile::setImageStatus(LoadingStatus status)
+{
+    mImageStatus = status;
 }
 
 } // namespace Tiled

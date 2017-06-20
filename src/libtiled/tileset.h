@@ -165,6 +165,7 @@ public:
     bool loadFromImage(const QImage &image, const QString &source);
     bool loadFromImage(const QString &fileName);
     bool loadImage();
+    void loadImages();
 
     SharedTileset findSimilarTileset(const QVector<SharedTileset> &tilesets) const;
 
@@ -203,6 +204,7 @@ public:
     SharedTileset sharedPointer() const;
 
     void setStatus(LoadingStatus status);
+    void setImageStatus(LoadingStatus status);
     LoadingStatus status() const;
     LoadingStatus imageStatus() const;
 
@@ -598,6 +600,14 @@ inline SharedTileset Tileset::sharedPointer() const
 inline void Tileset::setStatus(LoadingStatus status)
 {
     mStatus = status;
+}
+
+/**
+ * Sets the loading status of this tileset's image.
+ */
+inline void Tileset::setImageStatus(LoadingStatus status)
+{
+    mImageReference.status = status;
 }
 
 /**
